@@ -22,9 +22,9 @@ try:
 	import aptsources.sourceslist
 except ImportError as ex:
 	print(
-		"Error: {0!s}.\n\n"
-		"Do you have the '{1:s}' package installed?\n"
-		"You can do so with 'sudo apt-get install {1:s}'."
+		"Erreur: {0!s}.\n\n"
+		"Avez vous le paquet '{1:s}' installé ?\n"
+		"Sinon vous pouvez le faire comme cela 'sudo apt-get install {1:s}'."
 			.format(ex, _get_python_packagename('apt')),
 		file=sys.stderr)
 	sys.exit(127)
@@ -53,10 +53,10 @@ def _argparse(args):
 		('description', 'epilog'), map(str.strip, __doc__.rsplit('\n\n', 1)))))
 	parser.add_argument('-y', '--yes',
 		dest='apply_changes', action='store_const', const=True,
-		help='Apply all changes without question.')
+		help='Applique automatiquement les changements.')
 	parser.add_argument('-n', '--no-act', '--dry-run',
 		dest='apply_changes', action='store_const', const=False,
-		help='Never apply changes; only print what would be done.')
+		help="N'applique pas les changements; Affiche seulement ce qui peut être fait.")
 	return parser.parse_args(args)
 
 
@@ -72,25 +72,25 @@ def main(*args):
 			orig = dupe_set.pop(0)
 			for dupe in dupe_set:
 				print(
-					'Overlapping source entries:\n'
+					'Entrées superposées:\n'
 					'  1. {0}: {1}\n'
 					'  2. {2}: {3}\n'
-					'I disabled the latter entry.'.format(
+					"J'ai désactivé la dernière entrée.".format(
 						orig.file, orig, dupe.file, dupe),
 					end='\n\n')
 				dupe.disabled = True
 
-		print('\n{0} source entries were disabled:'.format(len(duplicates)),
+		print('\n{0} Les entrées suivantes ont été désactivées:'.format(len(duplicates)),
 			*itertools.chain(*duplicates), sep='\n  ', end='\n\n')
 
 		if args.apply_changes is None:
-			if input('Do you want to save these changes? (y/N) ').upper() != 'Y':
+			if input('Voulez vous sauvegarder ces changements? (y/N) ').upper() != 'Y':
 				return 2
 		if args.apply_changes is not False:
 			sourceslist.save()
 
 	else:
-		print('No duplicate entries were found.')
+		print("Aucun doublon n'a été trouvé.")
 
 	return 0
 
